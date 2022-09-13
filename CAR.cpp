@@ -46,9 +46,10 @@ void Car::drive() {
      delay(200);
      turnLeft();
      delay(500);
-     turnRight();
-     delay(500);
-     
+//     if(obstracted){
+//     turnRight();
+//     delay(700);
+   //  }
    
   }else{
      Serial.println("car clear");
@@ -90,7 +91,7 @@ void Car:: turnLeft() {
       ////
       analogWrite(w2F, 0);
       analogWrite(w2B, 0);
-      delay(500);
+      delay(700);
       stopDrive();
     }
 

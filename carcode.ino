@@ -1,19 +1,19 @@
 #include <Servo.h>
 #include "CAR.h"
 #include "LED.h"
-Servo myservo;  
+Servo myservo;
 int servoPin = 12;
-LED led1(2); 
+LED led1(2);
 //////////////wheels pins//////////////////
 int w1F = 5, w1B = 6, w2F = 3, w2B = 11;
 //////////////////
 int driveDirection = 2;
 int pos = 0;
-int speedv = 110; 
-int echoPin = 8; 
-int trigPin = 9; 
-long duration = 0; 
-int distance; 
+int speedv = 110;
+int echoPin = 8;
+int trigPin = 9;
+long duration = 0;
+int distance;
 int proximity = 0;
 ///////////
 bool shouldDrive = true;
@@ -21,15 +21,16 @@ bool shouldDrive = true;
 bool obstracted =  false;
 //////////////////
 int IRSensor = 10;
-int LED = 13; 
+int LED = 4;
+int BEEPER = 13;
 
 Car car1(
-    w1F,
-    w1B,
-    w2F,
-    w2B,
-    speedv,
-    obstracted);
+  w1F,
+  w1B,
+  w2F,
+  w2B,
+  speedv,
+  obstracted);
 //////////////////////////////
 ///////////////////////////////
 //////////////////////////////
@@ -42,10 +43,12 @@ void setup() {
   Serial.begin(9600); // // Serial Communication is starting with 9600 of baudrate speed
   //////////
   //car1.init();
-  car1.speedx=speedv;
+  car1.speedx = speedv;
   /////////////
   pinMode(IRSensor, INPUT); // IR Sensor pin INPUT
   pinMode(LED, OUTPUT); // LED Pin Output
+  pinMode(BEEPER, OUTPUT); // BEEPER Pin Output
+
 }
 
 
@@ -54,12 +57,13 @@ void setup() {
 ///////////////////////////////////////////
 //////////////////////////////////////////
 void loop() {
-  
+
   readDistance();
   //readMotion();
   //////////////////
   car1.drive();
- 
+
+
 }
 
 
@@ -133,11 +137,20 @@ void  readDistance() {
   Serial.print(distance);
   Serial.println(" cm");
   if (distance < 30) {
+    obstracted=true;
+    digitalWrite(BEEPER, HIGH);
     car1.obstracted = true;
   } else {
+      obstracted=false;
+      digitalWrite(BEEPER, LOW);
     car1.obstracted = false;
   }
-
+//  if (obstracted) {
+//    digitalWrite(BEEPER, HIGH);
+//    delay(distance * 100);
+//    digitalWrite(BEEPER, LOW);
+//    delay(distance * 100);
+//  }
 }
 
 void readMotion() {
@@ -149,14 +162,14 @@ void readMotion() {
     Serial.println("Obstacl Detected!"); // print Motion Detected! on the serial monitor window
     car1.obstracted = true;
     //car1.speedx=0;
-    
+
   }
   else  {
     //else turn on the onboard LED
     digitalWrite(LED, LOW); // LED High
     Serial.println("Clear!"); // print Motion Ended! on the serial monitor window
     car1.obstracted = false;
-   // car1.speedx=140;
-    
+    // car1.speedx=140;
+
   }
 }
